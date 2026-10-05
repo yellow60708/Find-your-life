@@ -1,0 +1,32 @@
+{
+  "id": "./index.html",
+  "name": "Find Your Life · 30-Minute Moments",
+  "short_name": "Find Your Life",
+  "description": "記錄每半小時的生活足跡，慢慢找回自己的步調。",
+  "lang": "zh-TW",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

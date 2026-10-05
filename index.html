@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#4f46e5">
+<title>Find Your Life · 30-Minute Moments</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen p-4 md:p-8">
+<div class="max-w-md mx-auto bg-white rounded-2xl shadow-lg border border-slate-100 p-6">
+<div class="flex justify-between items-start gap-3 mb-5">
+<div class="min-w-0">
+<div class="flex items-center gap-2.5">
+<span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-5 w-5">
+<circle cx="12" cy="12" r="9"></circle><path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 2"></path>
+</svg>
+</span>
+<div class="min-w-0">
+<h1 class="text-xl font-bold leading-tight tracking-tight text-slate-900">Find Your Life</h1>
+<p class="mt-0.5 text-xs font-medium tracking-wide text-indigo-500">30-Minute Moments</p>
+</div>
+</div>
+<p class="text-xs text-slate-400" id="current-date"></p>
+</div>
+<button id="notify-btn" class="max-w-[118px] shrink-0 rounded-full bg-slate-100 px-3 py-2 text-center text-[11px] leading-snug font-medium text-slate-600 hover:bg-slate-200 transition">
+聲音提醒：未開啟
+</button>
+</div>
+
+<!-- Tab 切換列 -->
+<div class="flex bg-slate-100 p-1 rounded-xl mb-6 text-xs font-semibold text-slate-500">
+  <button type="button" id="tab-btn-log" onclick="switchTab('log')" class="flex-1 py-2 rounded-lg transition-all bg-white text-slate-900 shadow-sm">時間記錄</button>
+  <button type="button" id="tab-btn-grid" onclick="switchTab('grid')" class="flex-1 py-2 rounded-lg transition-all text-slate-500 hover:text-slate-900">48格方塊</button>
+  <button type="button" id="tab-btn-todo" onclick="switchTab('todo')" class="flex-1 py-2 rounded-lg transition-all text-slate-500 hover:text-slate-900">今日目標</button>
+  <button type="button" id="tab-btn-list" onclick="switchTab('list')" class="flex-1 py-2 rounded-lg transition-all text-slate-500 hover:text-slate-900">足跡清單</button>
+</div>
+
+<!-- Tab 1: Log -->
+<div id="tab-pane-log" class="tab-content">
+  <form id="log-form" class="space-y-4">
+    <div>
+      <div class="flex justify-between items-center mb-1.5">
+        <label class="text-xs font-semibold text-slate-500">記錄時段</label>
+        <button type="button" id="reset-slot-btn" class="text-[11px] text-indigo-600 hover:underline">回到現在</button>
+      </div>
+      <select id="time-slot-select" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm bg-slate-50 font-mono font-medium focus:outline-none focus:ring-2 focus:ring-slate-800"></select>
+    </div>
+
+    <div>
+      <label class="block text-xs font-semibold text-slate-500 mb-1.5">做了什麼？</label>
+      <input type="text" id="action-input" placeholder="例如：吃早餐、通勤、開會、發呆..." required autofocus
+        class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-800">
+      
+      <div class="mt-2.5">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-[11px] text-slate-400">點擊標籤快速輸入（點 × 刪除）</span>
+        </div>
+        <div id="tag-container" class="flex flex-wrap gap-1.5"></div>
+        <div class="flex items-center gap-2 mt-2">
+          <input type="text" id="new-tag-input" placeholder="新增自訂標籤..." 
+            class="text-xs px-2.5 py-1.5 border border-slate-200 rounded-lg flex-1 focus:outline-none focus:ring-1 focus:ring-slate-700">
+          <button type="button" id="add-tag-btn" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-medium transition">+ 新增</button>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2.5 rounded-xl text-sm transition shadow-sm">儲存此時段紀錄</button>
+  </form>
+</div>
+
+<!-- Tab 2: Grid -->
+<div id="tab-pane-grid" class="tab-content hidden">
+  <div class="flex justify-between items-center mb-3">
+    <div>
+      <h2 class="text-xs font-bold tracking-wider text-slate-400 uppercase">今日 48 格進度地圖</h2>
+      <p class="text-[10px] text-slate-400">可選取多個時段，一次填入相同活動</p>
+    </div>
+    <span id="grid-stats" class="text-xs font-mono font-semibold text-indigo-600">0/48 格</span>
+  </div>
+  <div class="mb-3 rounded-xl border border-indigo-100 bg-indigo-50/60 p-3">
+    <div class="flex items-center justify-between gap-2">
+      <p id="batch-help" class="text-[11px] text-slate-500">選取多個格子後，統一填寫活動</p>
+      <button type="button" id="batch-mode-btn" class="shrink-0 rounded-lg bg-white px-2.5 py-1.5 text-[11px] font-medium text-indigo-700 shadow-sm hover:bg-indigo-100">開始選取</button>
+    </div>
+    <div id="batch-tools" class="hidden mt-2.5 space-y-2">
+      <div class="flex items-center justify-between text-[11px]">
+        <span id="selected-count" class="font-semibold text-indigo-700">已選 0 格</span>
+        <button type="button" id="clear-selection-btn" class="text-slate-500 hover:text-slate-900">清除選取</button>
+      </div>
+      <div class="flex gap-2">
+        <input type="text" id="batch-action-input" placeholder="輸入這些時段做的事..." class="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        <button type="button" id="apply-batch-btn" class="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-medium text-white hover:bg-indigo-700">統一填入</button>
+      </div>
+    </div>
+  </div>
+  <div id="grid-container" class="grid grid-cols-6 gap-1.5 p-2.5 bg-slate-50 rounded-xl border border-slate-100"></div>
+  <div class="flex items-center gap-3 mt-3 text-[10px] text-slate-400">
+    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-emerald-500 inline-block"></span> 已記錄</div>
+    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded ring-2 ring-indigo-500 bg-white inline-block"></span> 當前時段</div>
+    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-white border border-slate-200 inline-block"></span> 空白未記</div>
+  </div>
+</div>
+
+<!-- Tab 3: To-Do -->
+<div id="tab-pane-todo" class="tab-content hidden">
+  <div class="flex justify-between items-center mb-3">
+    <div>
+      <h2 class="text-sm font-bold text-slate-900">今日目標 · Focus</h2>
+      <p class="text-[11px] text-slate-400">鎖定今天最重要的 1~3 件事</p>
+    </div>
+    <span id="todo-stats" class="text-xs font-mono font-medium text-slate-400">0/0</span>
+  </div>
+  <div class="flex gap-2 mb-3">
+    <input type="text" id="todo-input" placeholder="輸入今日目標..." 
+      class="text-xs px-3 py-2 border border-slate-200 rounded-xl flex-1 focus:outline-none focus:ring-2 focus:ring-slate-800">
+    <button type="button" id="add-todo-btn" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-medium px-3.5 py-2 rounded-xl transition">+ 新增</button>
+  </div>
+  <div id="todo-list" class="space-y-1.5 max-h-72 overflow-y-auto pr-1"></div>
+</div>
+
+<!-- Tab 4: List -->
+<div id="tab-pane-list" class="tab-content hidden">
+  <div class="flex justify-between items-center mb-3">
+    <h2 class="text-lg font-semibold text-slate-400">今日時間軸</h2>
+    <div class="flex flex-wrap items-center justify-end gap-x-2 gap-y-1 text-xs">
+      <label class="text-indigo-600 hover:underline cursor-pointer">
+        匯入 CSV
+        <input type="file" id="import-input" accept=".csv" class="hidden">
+      </label>
+      <span class="text-slate-300">|</span>
+      <button id="export-btn" class="text-slate-500 hover:underline">匯出 CSV</button>
+      <span class="text-slate-300">|</span>
+      <button id="backup-export-btn" class="text-indigo-600 hover:underline">完整備份</button>
+      <label class="text-indigo-600 hover:underline cursor-pointer">
+        還原備份
+        <input type="file" id="backup-import-input" accept=".json,application/json" class="hidden">
+      </label>
+    </div>
+  </div>
+  <div id="log-list" class="space-y-2 max-h-80 overflow-y-auto pr-1"></div>
+</div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
